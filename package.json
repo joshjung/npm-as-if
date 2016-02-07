@@ -1,0 +1,32 @@
+{
+  "name": "npm-as-if",
+  "author": "Joshua Jung <joshua.p.jung@gmail.com>",
+  "license": "MIT",
+  "description": "npm utility that builds a package.json 'as if' an arbitrary date in the past. Useful for recovery of builds that were unintentionally broken by someone else's update.",
+  "version": "0.0.1",
+  "main": "index.js",
+  "url": "https://github.com/joshjung/npm-as-if",
+  "homepage": "https://github.com/joshjung/npm-as-if",
+  "email": "joshua.p.jung@gmail.com",
+  "files": [
+    "src",
+    "index.js",
+    "test"
+  ],
+  "dependencies": {
+    "commander": "^2.9.0",
+    "npmview": "0.0.4",
+    "underscore": "^1.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:joshjung/npm-as-if.git"
+  },
+  "keywords": [
+    "npm",
+    "date",
+    "revert",
+    "history",
+    "rollback"
+  ]
+}
