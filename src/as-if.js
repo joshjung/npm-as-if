@@ -1,5 +1,7 @@
 var npmview = require('npmview');
 var _ = require('underscore');
+var fs = require('fs');
+var forEach = require('async-foreach').forEach;
 
 _.mixin({
   'sortKeysBy': function (obj, comparator) {
@@ -21,7 +23,7 @@ AsIf.prototype = {
   view: function (package, callback) {
     npmview(package, function(err, version, moduleInfo) {
       if (err) {
-        console.error(err);
+        console.error('ERROR', err);
         callback(err);
         return;
       }
@@ -42,8 +44,11 @@ AsIf.prototype = {
     }
     return _.sortKeysBy(byDate);
   },
-  findLatestAsIf: function (package, date, callback) {
+  findAsIf: function (package, date, callback) {
     this.view(package, (function (err, data) {
+      if (err) {
+        return callback(err);
+      }
       var byDate = this.versionsByDate(data);
       var last;
 
@@ -54,8 +59,50 @@ AsIf.prototype = {
         last = time;
       }
 
-      callback(byDate[last]);
+      callback(undefined, byDate[last]);
     }).bind(this));
+  },
+  parseShrinkWrap: function (file) {
+    console.log(file);
+    var sw = require(file);
+    var packages = {};
+
+    var parseDependencies = (function (dependencies) {
+      for (var name in dependencies) {
+        packages[name] = dependencies[name].version;
+        if (dependencies[name].dependencies) {
+          parseDependencies(dependencies[name].dependencies);
+        }
+      }
+    }).bind(this);
+
+    // Build a huge list of all packages and their version as it exists in the shrinkwrap file
+    parseDependencies(sw.dependencies);
+
+    return packages;
+  },
+  shrinkwrapAsIf: function (file, date, callback) {
+    var packages = _.pairs(this.parseShrinkWrap(file));
+    var asIfPackages = {};
+    var _this = this;
+
+    forEach(packages, function (package, ix) {
+      var done = this.async();
+
+      _this.findAsIf(package[0], date, function (err, version) {
+        if (err) {
+          asIfPackages[package[0]] = err;
+        } else {
+          asIfPackages[package[0]] = {
+            previously: package[1],
+            asIf: version
+          };
+        }
+        done();
+      });
+    }, function () {
+      callback(asIfPackages);
+    });
   }
 };
 

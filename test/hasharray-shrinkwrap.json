@@ -1,0 +1,23 @@
+{
+  "name": "hasharray",
+  "version": "0.3.0",
+  "dependencies": {
+    "debug": {
+      "version": "1.0.4",
+      "from": "debug@^1.0.4",
+      "resolved": "https://registry.npmjs.org/debug/-/debug-1.0.4.tgz",
+      "dependencies": {
+        "ms": {
+          "version": "0.6.2",
+          "from": "ms@0.6.2",
+          "resolved": "https://registry.npmjs.org/ms/-/ms-0.6.2.tgz"
+        }
+      }
+    },
+    "jclass": {
+      "version": "1.0.1",
+      "from": "jclass@^1.0.1",
+      "resolved": "https://registry.npmjs.org/jclass/-/jclass-1.0.1.tgz"
+    }
+  }
+}
