@@ -1,15 +1,15 @@
 {
-  "name": "npm-as-if",
+  "name": "npm-time-lord",
   "author": "Joshua Jung <joshua.p.jung@gmail.com>",
   "license": "MIT",
-  "description": "npm utility that builds a package.json 'as if' an arbitrary date in the past. Useful for recovery of builds that were unintentionally broken by someone else's update.",
+  "description": "npm utility that provides historical information about packages and shrinkwrapped package files. Useful for recovery of builds that were unintentionally broken by someone else's update.",
   "version": "0.0.1",
-  "main": "index.js",
-  "url": "https://github.com/joshjung/npm-as-if",
-  "homepage": "https://github.com/joshjung/npm-as-if",
+  "main": "src/timeLord.js",
+  "url": "https://github.com/joshjung/npm-time-lord",
+  "homepage": "https://github.com/joshjung/npm-time-lord",
   "email": "joshua.p.jung@gmail.com",
   "bin": {
-    "npm-as-if": "index.js"
+    "npm-time-lord": "index.js"
   },
   "files": [
     "src",
@@ -25,13 +25,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:joshjung/npm-as-if.git"
+    "url": "git@github.com:joshjung/npm-time-lord.git"
   },
   "keywords": [
     "npm",
     "date",
     "revert",
     "history",
-    "rollback"
+    "rollback",
+    "build",
+    "shrinkwrap"
   ]
 }
