@@ -2,10 +2,13 @@
 var AsIf = require('./src/as-if');
 var program = require('commander');
 var path = require('path');
+var semvercmp = require('semver-compare');
+var _ =  require('./src/_mixin');
 
 program
   .version('0.0.1')
   .usage('[options] <date> <shrinkwrapOrPackage>')
+  .option('-f, --filter [type]', 'Filter output. \'-f=rollback\' filters only to versions that will need a rollback to be compatible with provided date. ')
   .option('-v, --verbose', 'Increase output verbosity')
   .parse(process.argv);
 
@@ -26,6 +29,17 @@ if (package) {
   asIf.findAsIf(package, date, console.log);
 } else {
   asIf.shrinkwrapAsIf(path.join(__dirname, shrinkwrap), date, function (packages) {
+    if (program.filter === 'rollback' || program.filter === 'r') {
+      packages = _.pairs(packages);
+      packages = packages.filter(function (p) {
+        if (typeof p[1].shrinkwrapVersion === 'string' && typeof p[1].versionAtDate === 'string') {
+          return semvercmp(p[1].shrinkwrapVersion, p[1].versionAtDate) == 1;
+        }
+
+        return false;
+      });
+      packages = _.object(packages);
+    }
     console.log(packages);
   });
 }

@@ -1,37 +1,41 @@
-var npmview = require('npmview');
-var _ = require('underscore');
+//var npmview = require('npmview');
+var _ = require('./_mixin');
 var fs = require('fs');
 var forEach = require('async-foreach').forEach;
-
-_.mixin({
-  'sortKeysBy': function (obj, comparator) {
-    var keys = _.sortBy(_.keys(obj), function (key) {
-      return comparator ? comparator(obj[key], key) : key;
-    });
-
-    return _.object(keys, _.map(keys, function (key) {
-      return obj[key];
-    }));
-  }
-});
+var spawn = require('child_process').spawn;
 
 var AsIf = function (options) {
   this.options = options;
 };
 
 AsIf.prototype = {
+  isModuleAccessible: function (package) {
+    try {
+      var mod = require(package);
+    } catch (error) {
+      return false;
+    }
+    return true;
+  },
   view: function (package, callback) {
-    npmview(package, function(err, version, moduleInfo) {
-      if (err) {
-        console.error('ERROR', err);
-        callback(err);
-        return;
+    var view = spawn('npm', ['view', package]);
+    var json = '';
+    view.stdout.on('data', function (data) {
+      json += data.toString();
+    });
+    view.stderr.on('data', function (err) {
+      json = err;
+    });
+    view.on('close', function (code) {
+      try {
+        json = eval('(' + json + ')');
+        callback(undefined, {
+          version: json.version,
+          moduleInfo: json
+        });
+      } catch (error) {
+        callback(error);
       }
-
-      callback(undefined, {
-        version: version,
-        moduleInfo: moduleInfo
-      });
     });
   },
   versionsByDate: function (viewData) {
@@ -63,7 +67,6 @@ AsIf.prototype = {
     }).bind(this));
   },
   parseShrinkWrap: function (file) {
-    console.log(file);
     var sw = require(file);
     var packages = {};
 
@@ -91,11 +94,14 @@ AsIf.prototype = {
 
       _this.findAsIf(package[0], date, function (err, version) {
         if (err) {
-          asIfPackages[package[0]] = err;
+          asIfPackages[package[0]] = {
+            shrinkwrapVersion: package[1],
+            versionAtDate: err.toString()
+          };
         } else {
           asIfPackages[package[0]] = {
-            previously: package[1],
-            asIf: version
+            shrinkwrapVersion: package[1],
+            versionAtDate: version
           };
         }
         done();
