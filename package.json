@@ -3,7 +3,7 @@
   "author": "Joshua Jung <joshua.p.jung@gmail.com>",
   "license": "MIT",
   "description": "npm utility that provides historical information about packages and shrinkwrapped package files. Useful for recovery of builds that were unintentionally broken by someone else's update.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/timeLord.js",
   "url": "https://github.com/joshjung/npm-time-lord",
   "homepage": "https://github.com/joshjung/npm-time-lord",
